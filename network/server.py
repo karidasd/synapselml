@@ -29,12 +29,15 @@ TELEMETRY_FILE = os.getenv("TELEMETRY_PATH", "synapselml_telemetry.pkl")
 def write_telemetry(data: Dict[str, Any], path: str = TELEMETRY_FILE) -> None:
     """Writes telemetry data atomically to prevent race conditions during dashboard reads."""
     tmp_dir = os.path.dirname(path) or "."
+    if tmp_dir and tmp_dir != ".":
+        os.makedirs(tmp_dir, exist_ok=True)
     with tempfile.NamedTemporaryFile("wb", dir=tmp_dir, delete=False) as f:
         pickle.dump(data, f)
         tmp_name = f.name
     try:
         os.replace(tmp_name, path)
     except Exception as e:
+
         print(f"Telemetry write warning: {e}")
         try:
             os.remove(tmp_name)

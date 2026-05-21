@@ -87,17 +87,38 @@ synapselml/
 
 ## 🚀 Quick Start & Installation
 
-### Prerequisites
-Ensure you have Python 3.10+ and the required packages installed:
+### Option A: Running with Docker Compose (Recommended & Automated)
+The easiest way to run the entire distributed architecture (Server, Client, and 3D Dashboard) is using Docker Compose. Ensure you have Docker installed and run:
+
+```bash
+# Clone the repository (if not already done)
+git clone https://github.com/karidasd/synapselml.git
+cd synapselml
+
+# Build and start all orchestrated containers
+docker-compose up --build
+```
+
+Once running:
+- Open your browser to **[http://localhost:8501](http://localhost:8501)** to watch the dynamic docking simulation.
+- View real-time logs from the server, dashboard, and client directly in your terminal.
+
+---
+
+### Option B: Running Locally (Manual Setup)
+
+#### 1. Prerequisites
+Ensure you have Python 3.10+ and install the required scientific and visualization dependencies:
 ```bash
 pip install torch numpy scikit-learn streamlit plotly pandas
 ```
 
-### Running the In-Memory Multi-Agent Mesh Simulation
+#### 2. Running the In-Memory Multi-Agent Mesh Simulation
 Execute the local simulation script showing convergence of representation spaces in-memory:
 ```bash
 python examples/multi_agent_mesh.py
 ```
+
 
 ---
 

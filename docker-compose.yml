@@ -11,6 +11,12 @@ services:
       - telemetry-data:/app/shared
     environment:
       - TELEMETRY_PATH=/app/shared/synapselml_telemetry.pkl
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s = socket.socket(); s.connect(('127.0.0.1', 8765))"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+      start_period: 2s
     restart: unless-stopped
 
   synapse-dashboard:
@@ -24,7 +30,8 @@ services:
     environment:
       - TELEMETRY_PATH=/app/shared/synapselml_telemetry.pkl
     depends_on:
-      - synapse-server
+      synapse-server:
+        condition: service_healthy
     restart: unless-stopped
 
   synapse-client:
@@ -32,9 +39,11 @@ services:
     container_name: synapse-client
     command: ["python", "network/client.py", "--host", "synapse-server", "--port", "8765", "--epochs", "50", "--delay", "1.0"]
     depends_on:
-      - synapse-server
+      synapse-server:
+        condition: service_healthy
     restart: "no"
 
 volumes:
   telemetry-data:
     driver: local
+

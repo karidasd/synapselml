@@ -71,8 +71,22 @@ async def stream_data() -> None:
     torch.manual_seed(42)
 
     try:
-        reader, writer = await asyncio.open_connection(args.host, args.port)
-        print("[+] Established connection to Executor Server. Streaming sequence...")
+        # Establish connection with retries (essential for Docker Compose service sync)
+        max_retries = 15
+        retry_delay = 2.0
+        reader, writer = None, None
+        for attempt in range(1, max_retries + 1):
+            try:
+                reader, writer = await asyncio.open_connection(args.host, args.port)
+                print(f"[+] Established connection to Executor Server (Attempt {attempt}/{max_retries}). Streaming sequence...")
+                break
+            except (ConnectionRefusedError, OSError) as e:
+                if attempt == max_retries:
+                    print(f"\n[-] Connection refused/failed after {max_retries} attempts. Ensure the Executor Server is running.")
+                    raise e
+                print(f"[-] Connection failed ({e}). Retrying in {retry_delay}s... (Attempt {attempt}/{max_retries})")
+                await asyncio.sleep(retry_delay)
+
         print("-" * 80)
         print(f"{'Epoch':<6} | {'Loss':<10} | {'MSE':<10} | {'Cos Dist':<10} | {'Orth Pen':<10} | {'EBR Action':<10}")
         print("-" * 80)
