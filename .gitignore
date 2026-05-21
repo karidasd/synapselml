@@ -13,3 +13,7 @@ env/
 # IDEs
 .vscode/
 .idea/
+
+# Local Telemetry and Runtime Logs
+synapselml_telemetry.pkl
+*.log

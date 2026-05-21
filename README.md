@@ -73,51 +73,93 @@ synapselml/
 ├── core/
 │   └── runtime.py           # LatentProjector, SynapseStream, and EntropyRuntime
 ├── examples/
-│   └── multi_agent_mesh.py  # Simulated multi-agent latent alignment iteration script
-└── specs/
-    └── core_protocol.md     # Mathematical, VTP, and EBR LaTeX specifications
+│   └── multi_agent_mesh.py  # Simulated in-memory multi-agent latent alignment script
+├── network/
+│   ├── client.py            # Async TCP Analyst Client (Source Space, d1=256)
+│   └── server.py            # Async TCP Executor Server (Target Space, d2=512)
+├── specs/
+│   └── core_protocol.md     # Mathematical, VTP, and EBR LaTeX specifications
+└── viz/
+    └── dashboard.py         # Streamlit & Plotly 3D Real-time Point Cloud Dashboard
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start & Installation
 
 ### Prerequisites
-- Python 3.10+
-- PyTorch 2.0+
-
+Ensure you have Python 3.10+ and the required packages installed:
 ```bash
-# Clone the repository
-git clone https://github.com/karidasd/synapselml.git
-cd synapselml
-
-# Install dependencies (only PyTorch is required)
-pip install torch
+pip install torch numpy scikit-learn streamlit plotly pandas
 ```
 
-### Running the Multi-Agent Mesh Simulation
-Execute the demonstration script illustrating the dynamic alignment of an Analyst Agent ($d_1=256$) and an Executor Agent ($d_2=512$) communicating purely through raw latent vectors:
-
+### Running the In-Memory Multi-Agent Mesh Simulation
+Execute the local simulation script showing convergence of representation spaces in-memory:
 ```bash
 python examples/multi_agent_mesh.py
 ```
 
-The runtime will print a real-time table demonstrating the joint alignment loss convergence using the Entropy-Based Runtime (EBR) micro-backpropagation loop:
+---
+
+## 🌐 Real-World Distributed Network Mesh & 3D Visualization
+
+SynapseLML supports multi-process execution where the Analyst Agent and Executor Agent run in completely isolated OS processes, streaming quantized representations over network sockets and updating a 3D visualization dashboard in real-time.
 
 ```
-================================================================================
-         SynapseLML (Latent Modeling Language) Multi-Agent Mesh
-================================================================================
-Epoch  | Loss       | MSE        | Cos Dist   | Orth Pen   | EBR Action
---------------------------------------------------------------------------------
-1      | 0.530320   | 0.311945   | 0.590229   | 5.353089   | MICRO_BP  
-2      | 0.387872   | 0.343585   | 0.291862   | 3.248803   | MICRO_BP  
-...
-20     | 0.256044   | 0.268850   | 0.208024   | 0.576195   | MICRO_BP  
---------------------------------------------------------------------------------
-Final Orthogonal Penalty (Frobenius deviation): 0.57619518
-STATUS: SUCCESS. Projector maintained absolute structure, preventing representation collapse.
-================================================================================
+                      +--------------------------+
+                      |  Analyst Client Process  |
+                      |  (network/client.py)     |
+                      +------------+-------------+
+                                   |
+                                   | Quantized FP8 Stream (VTP)
+                                   v
+                      +------------+-------------+     Atomic      +-------------------------+
+                      |  Executor Server Process |    Telemetry    |   Streamlit Dashboard   |
+                      |  (network/server.py)     +================>|   (viz/dashboard.py)    |
+                      +--------------------------+  (Shared PKL)   +-------------------------+
+```
+
+### 🛰️ The Binary Protocol Specification
+
+1. **VTP Packet Header (32 bytes)**:
+   - `Magic Bytes (4 bytes)`: `VTP\x00`
+   - `Payload Size (4 bytes)`: Size in bytes of the following serialized quantized tensor array (unsigned integer, big-endian)
+   - `B (4 bytes)`: Batch size (unsigned integer)
+   - `L (4 bytes)`: Sequence length (unsigned integer)
+   - `d (4 bytes)`: Tensor representation dimension (unsigned integer)
+   - `Scale Gamma (8 bytes)`: Dynamic symmetric quantization scale (float64 double)
+   - `Bit-Width (4 bytes)`: Number of quantization bits (unsigned integer, e.g., 8)
+
+2. **VTP Server Response (24 bytes)**:
+   - `Magic Bytes (4 bytes)`: `VTPR`
+   - `Loss (4 bytes)`: Current calculated total alignment loss (float32)
+   - `MSE (4 bytes)`: Mean Squared Error component (float32)
+   - `Cosine Distance (4 bytes)`: Cosine Distance component (float32)
+   - `Orthogonal Penalty (4 bytes)`: Procrustes orthogonal regularization penalty (float32)
+   - `Backprop Triggered (4 bytes)`: Flag indicating if inline micro-backprop was executed (1.0 = True, 0.0 = False)
+
+---
+
+### 🕹️ Multi-Process Execution Instructions
+
+To run the distributed network mesh and real-time visualization, open **three separate terminals**:
+
+#### 1️⃣ Terminal 1: Start the Executor Server
+The server starts the Target Space listener ($d_2 = 512$), intercepts incoming quantized representations, performs dequantization, runs the projector, checks alignment entropy boundaries, and triggers the inline backprop:
+```bash
+python network/server.py
+```
+
+#### 2️⃣ Terminal 2: Run the Streamlit Dashboard
+The dashboard uses scikit-learn PCA fitted to a stable target subspace to render a real-time, zero-jitter 3D visual convergence plot showing the two manifolds morphing and docking together:
+```bash
+streamlit run viz/dashboard.py
+```
+
+#### 3️⃣ Terminal 3: Launch the Analyst Client
+The client connects to the server, generates dynamic latent states, quantizes them, packages the byte stream, and pushes them to the server while outputting the received metric responses:
+```bash
+python network/client.py
 ```
 
 ---
