@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Engine: PyTorch](https://img.shields.io/badge/Engine-PyTorch-ee4c2c.svg)](https://pytorch.org)
 
+![SynapseLML Docking Simulation](assets/simulation.gif)
+
 SynapseLML is a revolutionary, non-human-readable, vector-native communication framework designed to eliminate the traditional text tokenization bottleneck in multi-agent and LLM-to-LLM workflows. 
 
 Traditional agent architectures communicate by translating internal high-dimensional representation states into text tokens, passing them over a network API, and re-tokenizing them at the target agent. SynapseLML establishes **Direct Latent Space Synchronization (LSS)**, enabling agents to stream high-dimensional tensor matrices directly across network barriers using learnable manifold projection alignments and real-time entropy-based feedback loop runtimes.
@@ -139,6 +141,8 @@ SynapseLML supports multi-process execution where the Analyst Agent and Executor
                       |  (network/server.py)     +================>|   (viz/dashboard.py)    |
                       +--------------------------+  (Shared PKL)   +-------------------------+
 ```
+
+![SynapseLML Docking Simulation](assets/simulation.gif)
 
 ### 🛰️ The Binary Protocol Specification
 
