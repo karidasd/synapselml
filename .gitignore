@@ -1,0 +1,15 @@
+# Python Caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyTorch/ML checkpoint directories
+.ipynb_checkpoints/
+.virtualenv/
+venv/
+env/
+.env
+
+# IDEs
+.vscode/
+.idea/
