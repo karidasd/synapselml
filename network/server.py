@@ -24,7 +24,7 @@ from core.runtime import LatentProjector, SynapseStream, EntropyRuntime
 
 HEADER_FORMAT = ">4sIIII d I"
 HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
-TELEMETRY_FILE = "synapselml_telemetry.pkl"
+TELEMETRY_FILE = os.getenv("TELEMETRY_PATH", "synapselml_telemetry.pkl")
 
 def write_telemetry(data: Dict[str, Any], path: str = TELEMETRY_FILE) -> None:
     """Writes telemetry data atomically to prevent race conditions during dashboard reads."""

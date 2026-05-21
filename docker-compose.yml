@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  synapse-server:
+    build: .
+    container_name: synapse-server
+    command: ["python", "network/server.py", "--host", "0.0.0.0", "--port", "8765"]
+    ports:
+      - "8765:8765"
+    volumes:
+      - telemetry-data:/app/shared
+    environment:
+      - TELEMETRY_PATH=/app/shared/synapselml_telemetry.pkl
+    restart: unless-stopped
+
+  synapse-dashboard:
+    build: .
+    container_name: synapse-dashboard
+    command: ["python", "-m", "streamlit", "run", "viz/dashboard.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+    volumes:
+      - telemetry-data:/app/shared
+    environment:
+      - TELEMETRY_PATH=/app/shared/synapselml_telemetry.pkl
+    depends_on:
+      - synapse-server
+    restart: unless-stopped
+
+  synapse-client:
+    build: .
+    container_name: synapse-client
+    command: ["python", "network/client.py", "--host", "synapse-server", "--port", "8765", "--epochs", "50", "--delay", "1.0"]
+    depends_on:
+      - synapse-server
+    restart: "no"
+
+volumes:
+  telemetry-data:
+    driver: local

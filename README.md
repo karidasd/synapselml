@@ -164,5 +164,27 @@ python network/client.py
 
 ---
 
+### 🐳 Docker Containerization & Orchestration
+
+SynapseLML supports instant deployment via Docker and Docker Compose. This packages all dependencies (including Python 3.11, PyTorch CPU, Streamlit, Plotly, and scikit-learn) into reproducible, lightweight container environments.
+
+The architecture is composed of:
+1. **`synapse-server`**: The TCP host listening on port `8765`.
+2. **`synapse-dashboard`**: Streamlit dashboard exposed on host port `8501`.
+3. **`synapse-client`**: Analyst client that streams dynamic tensors to the server container.
+
+*Note: Telemetry is synchronized dynamically between the server and the dashboard containers using a shared named Docker volume (`telemetry-data` mounted at `/app/shared`).*
+
+#### Run the entire network mesh and visualization with one command:
+```bash
+docker-compose up --build
+```
+
+Once running:
+- Open your browser to **[http://localhost:8501](http://localhost:8501)** to watch the dynamic docking simulation.
+- View real-time logs from the server, dashboard, and client directly in your terminal.
+
+---
+
 ## 📄 License
 This framework is licensed under the MIT License.

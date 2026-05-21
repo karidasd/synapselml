@@ -95,7 +95,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-TELEMETRY_PATH = "synapselml_telemetry.pkl"
+TELEMETRY_PATH = os.getenv("TELEMETRY_PATH", "synapselml_telemetry.pkl")
 
 @st.cache_resource
 def get_stable_pca() -> PCA:
