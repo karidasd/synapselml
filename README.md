@@ -6,6 +6,8 @@
 
 ![SynapseLML Docking Simulation](assets/simulation.gif)
 
+<video src="Video.mp4" controls="controls" width="100%"></video>
+
 SynapseLML is a revolutionary, non-human-readable, vector-native communication framework designed to eliminate the traditional text tokenization bottleneck in multi-agent and LLM-to-LLM workflows. 
 
 Traditional agent architectures communicate by translating internal high-dimensional representation states into text tokens, passing them over a network API, and re-tokenizing them at the target agent. SynapseLML establishes **Direct Latent Space Synchronization (LSS)**, enabling agents to stream high-dimensional tensor matrices directly across network barriers using learnable manifold projection alignments and real-time entropy-based feedback loop runtimes.
