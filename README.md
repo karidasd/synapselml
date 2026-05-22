@@ -6,7 +6,7 @@
 
 ![SynapseLML Docking Simulation](assets/simulation.gif)
 
-https://github.com/karidasd/synapselml/blob/main/Video.mp4
+![Video](Video.gif)
 
 SynapseLML is a revolutionary, non-human-readable, vector-native communication framework designed to eliminate the traditional text tokenization bottleneck in multi-agent and LLM-to-LLM workflows. 
 
